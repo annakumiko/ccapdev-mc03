@@ -15,8 +15,21 @@ $(document).ready(function () {
             - `#error` displays no error message
             - `#submit` is enabled
     */
-    $('#number').keyup(function () {
-        // your code here
+   
+    $('#number').keyup(function() {
+        var num = $('#number').val();
+        
+        $.get('/getCheckNumber', {number: num}, function(result) {
+            if (result !== '') { 
+                $('#number').css('background-color', 'red');
+                $('#error').text('Number already registered');
+                $('#submit').prop('disabled', true);}
+                
+            else {
+                $('#number').css('background-color', '#e3e3e3');
+                $('#error').text('');
+                $('#submit').prop('disabled', false);}
+        });
     });
 
     /*
@@ -30,8 +43,19 @@ $(document).ready(function () {
 
             The name and the number fields are reset to empty values.
     */
-    $('#submit').click(function () {
-        // your code here
+    $('#submit').click(function() {
+        var name = $('#name').val(),
+            num = $('#number').val();
+
+        if (name !== '' && num !== '') {
+            $.get('/add', {name: name, number: num}, function(result) {
+                if (result) {
+                    $('#contact').append(result);
+                    $('#name').val('');
+                    $('#number').val('');}
+            });}
+        else
+            alert('Please fill up the fields.');
     });
 
     /*
@@ -41,8 +65,14 @@ $(document).ready(function () {
             specific `.remove` button, then removes the its parent `<div>` of
             class `.contact`.
     */
-    $('#contacts').on('click', '.remove', function () {
-        // your code here
+    $('#contact').on('click', '.remove', function() {
+        var card = $(this),
+            text = card.siblings('div').text(),
+            contact = text.trim().split(/(\s)/);
+
+        $.get('/delete', {number: contact[contact.length-1]}, function(result) {
+            if (result) card.parent().remove();
+        });
     });
 
 })
