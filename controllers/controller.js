@@ -13,8 +13,11 @@ const controller = {
             current stored in the database.
     */
     getIndex: function(req, res) {
-        // your code here
-        res.render('home'); // This is to load the page initially
+        db.findMany(User, {}, '', function(result) {
+            res.render('home', { // This is to load the page initially
+                contacts: result
+            });
+        }); 
     },
 
     /*
@@ -25,7 +28,14 @@ const controller = {
             number, otherwise, it returns an empty string.
     */
     getCheckNumber: function(req, res) {
-        // your code here
+        var numInput = req.query.number;
+        
+        db.findOne(User, {number: numInput}, '', function(result) {
+            if (result)
+                res.send(result);
+            else
+                res.send('');
+        });
     },
 
     /*
@@ -35,7 +45,16 @@ const controller = {
             list of contacts in `home.hbs`.
     */
     getAdd: function(req, res) {
-        // your code here
+        var name = req.query.name,
+            num = req.query.number;
+
+        db.insertOne(User, {name: name, number: num}, function(result) {
+            if (result) {
+                res.render('partials/card.hbs', {name: name, number: num}, function (err, html) {
+                    res.send(html);
+                });
+            }
+        });
     },
 
     /*
@@ -45,8 +64,12 @@ const controller = {
             contacts in `home.hbs`.
     */
     getDelete: function (req, res) {
-        // your code here
-    }
+        var num = req.query.number;
+
+        db.deleteOne(User, {number: num}, function(result) {
+            res.send(result);
+        });
+}
 
 }
 
