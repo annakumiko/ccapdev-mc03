@@ -15,6 +15,7 @@ $(document).ready(function () {
             - `#error` displays no error message
             - `#submit` is enabled
     */
+   
     $('#number').keyup(function() {
         var num = $('#number').val();
         
@@ -54,7 +55,7 @@ $(document).ready(function () {
                     $('#number').val('');}
             });}
         else
-            alert('Missing field/s!');
+            alert('Please fill up the fields.');
     });
 
     /*
